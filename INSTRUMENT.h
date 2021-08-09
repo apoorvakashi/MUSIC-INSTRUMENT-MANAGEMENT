@@ -12,7 +12,14 @@ public:
   Instrument();
   void Clear();
   int getID();
-  void ReadFromStandardInput(BTree &tree);
+  void readID(BTree tree);
+  void readType();
+  void readDescription();
+  void readBrand();
+  void readColor();
+  void readPrice();
+  void readQuantity();
+  void ReadFromStandardInput(BTree tree);
   void Pack(IOBuffer &buffer) const;
   int Unpack(IOBuffer &buffer);
   void PrintHeadings();
@@ -41,37 +48,49 @@ int Instrument::getID()
   return stoi(ID);
 }
 
-void Instrument::ReadFromStandardInput(BTree &tree)
+void Instrument::readID(BTree tree)
 {
-
-  cout << CYAN;
-  int valid, temp;
+  int valid;
   do
   {
-    cout << "Enter the Instrument ID: ";
+    cout << "Enter the ID: ";
     cin >> ID;
     cin.sync();
     valid = validateID(tree, ID);
-    if (!valid)
-      cout << "\nInvalid ID. Please try again.\n";
   } while (!valid);
+}
 
-  cout << "Enter the type of Instrument: ";
+void Instrument::readType()
+{
+  cout << "Enter the Type: ";
   cin >> ws;
   getline(cin, Type);
+}
 
-  cout << "Enter the description (Model number, Material): ";
-  cin >> Description;
-  cin.sync();
-
+void Instrument::readBrand()
+{
   cout << "Enter the Brand name : ";
   cin >> ws;
   getline(cin, Brand);
+}
 
+void Instrument::readColor()
+{
   cout << "Enter the Color : ";
   cin >> ws;
   getline(cin, Color);
+}
 
+void Instrument::readDescription()
+{
+  cout << "Enter the description (Model number, Material): ";
+  cin >> ws;
+  getline(cin, Description);
+}
+
+void Instrument::readPrice()
+{
+  int valid;
   do
   {
     cout << "Enter the price: ";
@@ -81,7 +100,11 @@ void Instrument::ReadFromStandardInput(BTree &tree)
     if (!valid)
       cout << "\nPlease enter a valid price.\n";
   } while (!valid);
+}
 
+void Instrument::readQuantity()
+{
+  int valid;
   do
   {
     cout << "Enter the quantity: ";
@@ -91,6 +114,17 @@ void Instrument::ReadFromStandardInput(BTree &tree)
     if (!valid)
       cout << "\nPlease enter a valid number.\n";
   } while (!valid);
+}
+void Instrument::ReadFromStandardInput(BTree tree)
+{
+  cout << MAGENTA;
+  readID(tree);
+  readType();
+  readDescription();
+  readBrand();
+  readColor();
+  readPrice();
+  readQuantity();
   cout << RESET;
 }
 
@@ -136,11 +170,11 @@ int Instrument::Unpack(IOBuffer &buffer)
 
 void Instrument::PrintHeadings()
 {
-  cout << BLUE;
+  cout << YELLOW;
   cout << string(140, '-') << "\n";
-  cout << setw(5) << "ID" << setw(50) << "TYPE" << setw(20)
-       << "DESCRIPTION" << setw(30) << "BRAND" << setw(6) << "COLOR"
-       << setw(10) << "QUANTITY" << setw(10) << "PRICE"
+  cout << setw(5) << "ID" << setw(25) << "TYPE" << setw(50)
+       << "DESCRIPTION" << setw(20) << "BRAND" << setw(15) << "COLOR"
+       << setw(15) << "QUANTITY" << setw(10) << "PRICE"
        << "\n";
   cout << string(140, '-') << "\n";
   cout << RESET;
@@ -148,9 +182,9 @@ void Instrument::PrintHeadings()
 
 void Instrument::PrintRecord()
 {
-  cout << setw(5) << ID << setw(50) << Type << setw(20)
-       << Description << setw(30) << Brand << setw(6) << Color
-       << setw(10) << Quantity << setw(10) << Price << "\n";
+  cout << setw(5) << ID << setw(25) << Type << setw(50)
+       << Description << setw(20) << Brand << setw(10) << Color
+       << setw(15) << Quantity << setw(10) << Price << "\n";
 }
 
 ostream &operator<<(ostream &stream, Instrument d)
@@ -168,9 +202,9 @@ void Instrument::ModifyRecord()
   int choice;
   do
   {
-    cout << *this << "\n";
-    cout << "Which field would you like to modify?\n";
-    cout << "1. ID\t2. Type\t3. Description\t4. Brand\t5. Color\t6. Quantity\t7. Price\t8. Back to main menu";
+    cout << "Which field would you like to modify?\n\n";
+    cout << YELLOW << "1. ID\t2. Type\t3. Description\t4. Brand\t5. Color\t6. Quantity\t7. Price\t8. Back to main menu\n"
+         << RESET;
     cout << "\nEnter the field no. : ";
     cin >> choice;
     if (choice > 0 && choice < 8)

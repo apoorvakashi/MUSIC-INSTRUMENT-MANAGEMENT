@@ -62,7 +62,7 @@ void displayAllInstrumentRecordsEntrySequenced(RecordFile<Instrument> &File, Ins
     if (instrument.ID[0] != '$')
       instrument.PrintRecord();
   }
-  cout << BLUE << string(140, '-') << "\n"
+  cout << YELLOW << string(140, '-') << "\n"
        << RESET;
   File.Close();
 }
@@ -79,18 +79,18 @@ void displayAllInstrumentRecordsSortedById(RecordFile<Instrument> &File, Instrum
       break;
     instrument.PrintRecord();
   }
-  cout << BLUE << string(140, '-') << "\n"
+  cout << YELLOW << string(140, '-') << "\n"
        << RESET;
   File.Close();
 }
 
 int searchInstrumentRecord(int key, RecordFile<Instrument> &File, Instrument &instrument, BTree &tree)
 {
-  cout << BLUE << ITALIC << "\nSearching based on ID...\n\n"
+  cout << MAGENTA << ITALIC << "\nSearching based on ID...\n\n"
        << RESET;
   int result = tree.search(key);
   if (result == -1)
-    cout << GREEN << "\nRecord not found.\n"
+    cout << RED << "\nRecord not found.\n"
          << RESET;
   else
   {
@@ -99,7 +99,7 @@ int searchInstrumentRecord(int key, RecordFile<Instrument> &File, Instrument &in
     File.Close();
     cout << GREEN << "\nRecord found.\n"
          << RESET;
-    cout << instrument << "\n";
+    cout << instrument << "\t";
   }
   return result;
 }
@@ -109,7 +109,7 @@ int removeInstrumentRecord(int key, RecordFile<Instrument> &File, Instrument &In
   int recAddr = searchInstrumentRecord(key, File, Instrument, tree);
   if (recAddr != -1)
   {
-    cout << BLUE << ITALIC << "\nAre you sure you want to delete the record? [y/n]\n"
+    cout << RED << ITALIC << "\nAre you sure you want to delete the record? [y/n]\n"
          << RESET;
     char ch;
     cin >> ch;
@@ -156,26 +156,37 @@ int modifyInstrumentRecord(int key, RecordFile<Instrument> &File, Instrument &in
 void treeTraversal(BTree &tree)
 {
   vector<pair<int, int>> nodes = tree.fetchAll();
+  cout << "\n"
+       << BOLD << "B Tree (" << nodes.size() << ")" << RESET << "\n";
+  cout << YELLOW;
+  cout << string(30, '-') << "\n";
+  cout << setw(10) << "Key" << setw(10) << "Record Address"
+       << "\n";
+  cout << string(30, '-') << "\n";
+  cout << RESET;
   for (auto node : nodes)
-    cout << "Key = " << node.first << " Record Address = " << node.second << "\n";
+    cout << setw(10) << node.first << setw(20) << node.second << "\n";
+  cout << YELLOW;
+  cout << string(30, '-') << "\n";
+  cout << RESET;
 }
 
 void printMenu()
 {
   cout << ITALIC;
-  cout << YELLOW;
-  cout << "\n"
-       << string(40, '_') << "\n";
-  cout << "\n1. Insert";
-  cout << "\n2. Display (Entry-Sequenced)";
-  cout << "\n3. Display (Sorted by ID)";
-  cout << "\n4. Search by ID";
-  cout << "\n5. Delete by ID";
-  cout << "\n6. Modify by ID";
-  cout << "\n7. Traverse the BTree";
-  cout << "\n8. Exit the program";
-  cout << "\n"
-       << string(40, '_') << "\n";
+  cout << CYAN;
+  cout << "\n";
+  cout << string(40, '-') << "\n";
+  cout << "\n1. Insert record\n";
+  cout << "\n2. Display In Entry Sequence\n";
+  cout << "\n3. Display records Sorted by ID\n";
+  cout << "\n4. Search record by ID\n";
+  cout << "\n5. Modify record by ID\n";
+  cout << "\n6. Delete record by ID\n";
+  cout << "\n7. Traverse the BTree\n";
+  cout << "\n8. Exit\n\n";
+  cout << string(40, '-') << "\n";
+  cout << "\n";
   cout << RESET;
 }
 
@@ -220,22 +231,22 @@ int main()
       break;
 
     case 4:
-      cout << "\nEnter the key to be searched: ";
+      cout << "\nEnter the key (ID) to be searched: ";
       cin >> key;
       searchInstrumentRecord(key, InstrumentFile, instrument, tree);
       break;
 
     case 5:
-      cout << "\nEnter the key to be deleted: ";
+      cout << "\nEnter the key (ID) to be modified: ";
       cin >> key;
-      if (removeInstrumentRecord(key, InstrumentFile, instrument, tree) != -1)
+      if (modifyInstrumentRecord(key, InstrumentFile, instrument, tree) != -1)
         rewriteFlag = true;
       break;
 
     case 6:
-      cout << "\nEnter the key to be modified: ";
+      cout << "\nEnter the key (ID) to be deleted: ";
       cin >> key;
-      if (modifyInstrumentRecord(key, InstrumentFile, instrument, tree) != -1)
+      if (removeInstrumentRecord(key, InstrumentFile, instrument, tree) != -1)
         rewriteFlag = true;
       break;
 
